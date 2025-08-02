@@ -1,0 +1,38 @@
+package com.soloproject.LegalPark.dto.request.verificationCode;
+
+import jakarta.validation.constraints.NotBlank;
+
+public class VerifyPaymentCodeRequest {
+    public @NotBlank(message = "User ID cannot be blank") String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(@NotBlank(message = "User ID cannot be blank") String userId) {
+        this.userId = userId;
+    }
+
+    public @NotBlank(message = "Verification code cannot be blank") String getCode() {
+        return code;
+    }
+
+    public void setCode(@NotBlank(message = "Verification code cannot be blank") String code) {
+        this.code = code;
+    }
+
+    @NotBlank(message = "User ID cannot be blank")
+    private String userId;
+
+    @NotBlank(message = "Verification code cannot be blank")
+    private String code;
+
+    public @NotBlank(message = "Parking transaction ID cannot be empty") String getParkingTransactionId() {
+        return parkingTransactionId;
+    }
+
+    public void setParkingTransactionId(@NotBlank(message = "Parking transaction ID cannot be empty") String parkingTransactionId) {
+        this.parkingTransactionId = parkingTransactionId;
+    }
+
+    @NotBlank(message = "Parking transaction ID cannot be empty")
+    private String parkingTransactionId;
+}

@@ -1,0 +1,1571 @@
+{
+	"info": {
+		"_postman_id": "9a7b1c3d-4e5f-6a7b-8c9d-1e2f3a4b5c6d",
+		"name": "LegalPark API Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Collection of API endpoints for LegalPark application, including Authentication, Merchant, Vehicle, Parking Spot, Parking Transaction, and Report services for both Admin and User roles."
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Example of setting global variables or pre-request scripts here"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Example of parsing the token from a login response and setting it as a variable",
+					"if (pm.response.json() && pm.response.json().data && pm.response.json().data.token) {",
+					"    pm.environment.set(\"token\", pm.response.json().data.token);",
+					"}",
+					"",
+					"// Example of parsing an ID from a creation response",
+					"if (pm.response.json() && pm.response.json().data && pm.response.json().data.id) {",
+					"    pm.environment.set(\"lastCreatedId\", pm.response.json().data.id);",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "YOUR_AUTH_TOKEN_HERE",
+			"type": "string"
+		},
+		{
+			"key": "adminToken",
+			"value": "YOUR_ADMIN_AUTH_TOKEN_HERE",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "YOUR_USER_ID_HERE",
+			"type": "string"
+		},
+		{
+			"key": "merchantId",
+			"value": "YOUR_MERCHANT_ID_HERE",
+			"type": "string"
+		},
+		{
+			"key": "merchantCode",
+			"value": "YOUR_MERCHANT_CODE_HERE",
+			"type": "string"
+		},
+		{
+			"key": "vehicleId",
+			"value": "YOUR_VEHICLE_ID_HERE",
+			"type": "string"
+		},
+		{
+			"key": "parkingSpotId",
+			"value": "YOUR_PARKING_SPOT_ID_HERE",
+			"type": "string"
+		},
+		{
+			"key": "transactionId",
+			"value": "YOUR_TRANSACTION_ID_HERE",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountName\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"phoneNumber\": \"081234567890\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user account."
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user and get JWT token."
+					},
+					"response": []
+				},
+				{
+					"name": "Verification Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"123456\" \n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/verification-account",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"verification-account"
+							]
+						},
+						"description": "Verify user account with a given code."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "none"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout the authenticated user."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Merchant",
+			"item": [
+				{
+					"name": "Create Merchant",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"merchantName\": \"Mall ABC\",\n    \"merchantAddress\": \"Jl. Sudirman No. 1\",\n    \"contactPerson\": \"Budi\",\n    \"contactPhone\": \"081122334455\",\n    \"merchantCode\": \"MALLABC\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/merchants",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"merchants"
+							]
+						},
+						"description": "Create a new merchant."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Merchants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/merchants/find",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"merchants",
+								"find"
+							]
+						},
+						"description": "Get a list of all merchants."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Merchant by Code",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"merchantCode\": \"MALLABC\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/merchants/get-by-code",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"merchants",
+								"get-by-code"
+							]
+						},
+						"description": "Get merchant details by merchant code."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Merchant",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"merchantName\": \"Mall XYZ\",\n    \"contactPhone\": \"081122334466\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/merchants/update/{{merchantId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"merchants",
+								"update",
+								"{{merchantId}}"
+							]
+						},
+						"description": "Update an existing merchant."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Merchant",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/merchants/delete/{{merchantId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"merchants",
+								"delete",
+								"{{merchantId}}"
+							]
+						},
+						"description": "Delete a merchant by ID."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Vehicle",
+			"item": [
+				{
+					"name": "Admin Register Vehicle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"licensePlate\": \"B 1234 XYZ\",\n    \"type\": \"CAR\",\n    \"ownerId\": \"{{userId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/vehicle/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"vehicle",
+								"register"
+							]
+						},
+						"description": "Admin registers a new vehicle for a specific user."
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Get All Vehicles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/vehicles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"vehicles"
+							]
+						},
+						"description": "Admin gets a list of all vehicles."
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Get Vehicle by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/vehicle/{{vehicleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"vehicle",
+								"{{vehicleId}}"
+							]
+						},
+						"description": "Admin gets details of a single vehicle by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Get Vehicles by User ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/vehicle/by-user/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"vehicle",
+								"by-user",
+								"{{userId}}"
+							]
+						},
+						"description": "Admin gets a list of vehicles owned by a specific user."
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Delete Vehicle",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/vehicle/{{vehicleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"vehicle",
+								"{{vehicleId}}"
+							]
+						},
+						"description": "Admin deletes a vehicle by ID."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Vehicle",
+			"item": [
+				{
+					"name": "User Register Vehicle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"licensePlate\": \"D 4567 ABC\",\n    \"type\": \"MOTORCYCLE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/vehicle/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"vehicle",
+								"register"
+							]
+						},
+						"description": "User registers their own vehicle."
+					},
+					"response": []
+				},
+				{
+					"name": "User Get All Vehicles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/vehicles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"vehicles"
+							]
+						},
+						"description": "User gets a list of their own vehicles."
+					},
+					"response": []
+				},
+				{
+					"name": "User Get Vehicle by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/vehicle/{{vehicleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"vehicle",
+								"{{vehicleId}}"
+							]
+						},
+						"description": "User gets details of one of their vehicles by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "User Update Vehicle",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"licensePlate\": \"D 4567 XYZ\",\n    \"type\": \"CAR\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/vehicle/{{vehicleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"vehicle",
+								"{{vehicleId}}"
+							]
+						},
+						"description": "User updates details of their vehicle by ID."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Parking Spot",
+			"item": [
+				{
+					"name": "Create Parking Spot",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"spotNumber\": \"A01\",\n    \"floor\": 1,\n    \"spotType\": \"CAR\",\n    \"merchantCode\": \"MALLABC\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-spots",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-spots"
+							]
+						},
+						"description": "Admin creates a new parking spot."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Parking Spots",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-spots",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-spots"
+							]
+						},
+						"description": "Admin gets a list of all parking spots."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Parking Spot by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-spots/{{parkingSpotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-spots",
+								"{{parkingSpotId}}"
+							]
+						},
+						"description": "Admin gets details of a single parking spot by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Parking Spot",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"MAINTENANCE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-spots/{{parkingSpotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-spots",
+								"{{parkingSpotId}}"
+							]
+						},
+						"description": "Admin updates a parking spot by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Parking Spot",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-spots/{{parkingSpotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-spots",
+								"{{parkingSpotId}}"
+							]
+						},
+						"description": "Admin deletes a parking spot by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Parking Spots by Merchant",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-spots/by-merchant/{{merchantCode}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-spots",
+								"by-merchant",
+								"{{merchantCode}}"
+							]
+						},
+						"description": "Admin gets a list of parking spots by merchant code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Parking Spot",
+			"item": [
+				{
+					"name": "Get Available Parking Spots",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/parking-spots/available?merchantCode=MALLABC&spotType=CAR&floor=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"parking-spots",
+								"available"
+							],
+							"query": [
+								{
+									"key": "merchantCode",
+									"value": "MALLABC"
+								},
+								{
+									"key": "spotType",
+									"value": "CAR"
+								},
+								{
+									"key": "floor",
+									"value": "1"
+								}
+							]
+						},
+						"description": "User gets a list of available parking spots with optional filters."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Parking Spots by Merchant",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/parking-spots/by-merchant/{{merchantCode}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"parking-spots",
+								"by-merchant",
+								"{{merchantCode}}"
+							]
+						},
+						"description": "User gets all parking spots for a specific merchant."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Parking Transaction",
+			"item": [
+				{
+					"name": "Get All Transactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-transactions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-transactions"
+							]
+						},
+						"description": "Admin gets a list of all parking transactions."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transaction by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-transactions/{{transactionId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-transactions",
+								"{{transactionId}}"
+							]
+						},
+						"description": "Admin gets details of a single transaction by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transactions by Vehicle ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-transactions/by-vehicle/{{vehicleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-transactions",
+								"by-vehicle",
+								"{{vehicleId}}"
+							]
+						},
+						"description": "Admin gets a list of transactions for a specific vehicle."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transactions by Spot ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-transactions/by-spot/{{parkingSpotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-transactions",
+								"by-spot",
+								"{{parkingSpotId}}"
+							]
+						},
+						"description": "Admin gets a list of transactions for a specific parking spot."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transactions by Merchant ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-transactions/by-merchant/{{merchantId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-transactions",
+								"by-merchant",
+								"{{merchantId}}"
+							]
+						},
+						"description": "Admin gets a list of transactions for a specific merchant."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transactions by Parking Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-transactions/by-parking-status?status=ACTIVE",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-transactions",
+								"by-parking-status"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ACTIVE"
+								}
+							]
+						},
+						"description": "Admin gets transactions filtered by parking status (ACTIVE, COMPLETED, CANCELLED)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transactions by Payment Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-transactions/by-payment-status?status=PENDING",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-transactions",
+								"by-payment-status"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "PENDING"
+								}
+							]
+						},
+						"description": "Admin gets transactions filtered by payment status (PENDING, PAID, FAILED)."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Transaction Payment Status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-transactions/{{transactionId}}/payment-status?newPaymentStatus=PAID",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-transactions",
+								"{{transactionId}}",
+								"payment-status"
+							],
+							"query": [
+								{
+									"key": "newPaymentStatus",
+									"value": "PAID"
+								}
+							]
+						},
+						"description": "Admin updates the payment status of a transaction."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Transaction",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/parking-transactions/{{transactionId}}/cancel",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"parking-transactions",
+								"{{transactionId}}",
+								"cancel"
+							]
+						},
+						"description": "Admin cancels a parking transaction."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Parking Transaction",
+			"item": [
+				{
+					"name": "Record Parking Entry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"licensePlate\": \"B 1234 XYZ\",\n    \"merchantCode\": \"MALLABC\",\n    \"spotNumber\": \"A01\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/parking-transactions/entry",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"parking-transactions",
+								"entry"
+							]
+						},
+						"description": "User records a new parking entry."
+					},
+					"response": []
+				},
+				{
+					"name": "Record Parking Exit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"licensePlate\": \"B 1234 XYZ\",\n    \"merchantCode\": \"MALLABC\",\n    \"verificationCode\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/parking-transactions/exit",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"parking-transactions",
+								"exit"
+							]
+						},
+						"description": "User records a parking exit and processes payment."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Active Transaction",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/parking-transactions/active?licensePlate=B 1234 XYZ",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"parking-transactions",
+								"active"
+							],
+							"query": [
+								{
+									"key": "licensePlate",
+									"value": "B 1234 XYZ"
+								}
+							]
+						},
+						"description": "User gets their active parking transaction by license plate."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transaction History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/parking-transactions/history?licensePlate=B 1234 XYZ",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"parking-transactions",
+								"history"
+							],
+							"query": [
+								{
+									"key": "licensePlate",
+									"value": "B 1234 XYZ"
+								}
+							]
+						},
+						"description": "User gets their parking transaction history by license plate."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transaction Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/parking-transactions/details/{{transactionId}}?licensePlate=B 1234 XYZ",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"parking-transactions",
+								"details",
+								"{{transactionId}}"
+							],
+							"query": [
+								{
+									"key": "licensePlate",
+									"value": "B 1234 XYZ"
+								}
+							]
+						},
+						"description": "User gets details of a specific transaction by ID and license plate."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Report",
+			"item": [
+				{
+					"name": "Get Daily Revenue Report",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/report/revenue/daily?date=2025-08-01&merchantCode=MALLABC",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"report",
+								"revenue",
+								"daily"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-08-01"
+								},
+								{
+									"key": "merchantCode",
+									"value": "MALLABC",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Admin gets a daily revenue report, optionally filtered by merchant."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Parking Spot Occupancy Report",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/report/occupancy?merchantCode=MALLABC&status=OCCUPIED",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"report",
+								"occupancy"
+							],
+							"query": [
+								{
+									"key": "merchantCode",
+									"value": "MALLABC",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "OCCUPIED",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Admin gets an occupancy report, with optional filters for merchant and status."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Report",
+			"item": [
+				{
+					"name": "Get User Parking History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/report/{{userId}}/history?startDate=2025-07-01&endDate=2025-07-31",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"report",
+								"{{userId}}",
+								"history"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2025-07-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-07-31"
+								}
+							]
+						},
+						"description": "User gets their parking transaction history within a date range."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Summary Report",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/report/{{userId}}/summary",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"report",
+								"{{userId}}",
+								"summary"
+							]
+						},
+						"description": "User gets a summary report of their parking activity."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Verification Code",
+			"item": [
+				{
+					"name": "Generate Payment Verification Code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{userId}}\",\n    \"parkingTransactionId\": \"{{transactionId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/payment/verification/generate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payment",
+								"verification",
+								"generate"
+							]
+						},
+						"description": "Generate and send a payment verification code (e.g., OTP) to the user."
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Payment Verification Code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{userId}}\",\n    \"parkingTransactionId\": \"{{transactionId}}\",\n    \"code\": \"123456\" \n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/payment/verification/validate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payment",
+								"verification",
+								"validate"
+							]
+						},
+						"description": "Validate the payment verification code provided by the user."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

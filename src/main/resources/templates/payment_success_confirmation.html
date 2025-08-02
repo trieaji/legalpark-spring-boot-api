@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Konfirmasi Pembayaran Parkir LegalPark</title>
+</head>
+<body>
+<p>Halo <span th:text="${name}"></span>,</p>
+<p>Pembayaran parkir Anda di LegalPark telah berhasil dikonfirmasi!</p>
+<p>Berikut detail transaksi Anda:</p>
+<ul>
+    <li><strong>Lokasi:</strong> <span th:text="${merchantName}"></span></li>
+<!--    <li><strong>Nomor Spot:</strong> <span th:text="${spotNumber}"></span></li>-->
+    <li><strong>Plat Nomor:</strong> <span th:text="${licensePlate}"></span></li>
+    <li><strong>Waktu Masuk:</strong> <span th:text="${entryTime}"></span></li>
+    <li><strong>Waktu Keluar:</strong> <span th:text="${exitTime}"></span></li>
+<!--    <li><strong>Durasi Parkir:</strong> <span th:text="${durationHours}"></span> jam <span th:text="${durationMinutes}"></span> menit</li>-->
+    <li><strong>Total Biaya:</strong> Rp <span th:text="${totalCost}"></span></li>
+</ul>
+<p>Terima kasih telah menggunakan LegalPark. Selamat berkendara!</p>
+<p>Salam Hormat,</p>
+<p>Tim LegalPark</p>
+</body>
+</html>
