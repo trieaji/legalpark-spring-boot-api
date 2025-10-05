@@ -15,10 +15,10 @@ public class TemplateServiceImpl implements ITemplateService{
     @Override
     public String processEmailTemplate(String templateName, Map<String, Object> variables) {
         Context context = new Context();
-        // Menambahkan semua variabel dari Map ke konteks Thymeleaf
+        // Adding all variables from Map to the Thymeleaf context
         variables.forEach(context::setVariable);
 
-        // Memproses template dan mengembalikan string HTML
+        // Processing templates and returning HTML strings
         return templateEngine.process(templateName, context);
     }
 }

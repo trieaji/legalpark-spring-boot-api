@@ -51,9 +51,9 @@ public class AppConfig {
 
     @Bean
     public UserDetailsService userDetailsService(){
-//        return username -> usersRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+
         return username -> {
-            Users user = usersRepository.findByEmail(username) // Cari user berdasarkan email (yang digunakan untuk login)
+            Users user = usersRepository.findByEmail(username) // Search for users by email (used for login)
                     .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
             // clean code version
@@ -62,13 +62,13 @@ public class AppConfig {
                             ? List.of(new SimpleGrantedAuthority(user.getRole().name()))
                             : Collections.emptyList();
 
-            // PENTING: Buat objek UserDetails Spring Security dengan ID user sebagai username (principal name)
+            // IMPORTANT: Create a Spring Security UserDetails object with the user ID as the username (principal name).
             return new org.springframework.security.core.userdetails.User(
                     user.getEmail(), 
                     user.getPassword(),
                     authorities
 //                    (user.getRole() != null)
-//                    ? List.of(new SimpleGrantedAuthority(user.getRole().name())) // Ganti dengan peran contohnya seperti disamping bro -> (misal: List.of(new SimpleGrantedAuthority(user.getRole())))
+//                    ? List.of(new SimpleGrantedAuthority(user.getRole().name()))
 //                            : Collections.emptyList()
             );
         };

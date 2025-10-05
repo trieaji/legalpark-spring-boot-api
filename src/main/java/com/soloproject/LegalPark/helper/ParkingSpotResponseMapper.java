@@ -17,8 +17,8 @@ public class ParkingSpotResponseMapper {
         ParkingSpotResponse response = new ParkingSpotResponse();
         response.setId(parkingSpot.getId());
         response.setSpotNumber(parkingSpot.getSpotNumber());
-        response.setSpotType(parkingSpot.getSpotType().name()); // Convert enum to String
-        response.setStatus(parkingSpot.getStatus().name());     // Convert enum to String
+        response.setSpotType(parkingSpot.getSpotType().name());
+        response.setStatus(parkingSpot.getStatus().name());
         response.setFloor(parkingSpot.getFloor());
 
         if (parkingSpot.getMerchant() != null) {

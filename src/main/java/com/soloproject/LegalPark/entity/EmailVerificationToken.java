@@ -13,7 +13,7 @@ import java.util.UUID;
 public class EmailVerificationToken {
     @Id
     @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2") // Definisi generator UUID versi 4 untuk String
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "id", columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private String id;
 
@@ -49,7 +49,7 @@ public class EmailVerificationToken {
     }
 
 
-    public String getId() { // Getter untuk String ID
+    public String getId() {
         return id;
     }
 
@@ -74,7 +74,7 @@ public class EmailVerificationToken {
     }
 
     
-    public void setId(String id) { // Setter untuk String ID
+    public void setId(String id) {
         this.id = id;
     }
 

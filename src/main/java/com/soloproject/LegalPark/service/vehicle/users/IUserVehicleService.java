@@ -4,7 +4,7 @@ import com.soloproject.LegalPark.dto.request.vehicle.VehicleRequest;
 import com.soloproject.LegalPark.dto.request.vehicle.VehicleUpdateRequest;
 import org.springframework.http.ResponseEntity;
 
-public interface IUserVehicleService { // menangani siapa yang parkir (kendaraannya).
+public interface IUserVehicleService {
     ResponseEntity<Object> UserRegisterVehicle(VehicleRequest request);
     ResponseEntity<Object> UserGetAllVehicle();
     ResponseEntity<Object> UserGetVehicleById(String id);

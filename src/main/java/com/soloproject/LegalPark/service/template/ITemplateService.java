@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface ITemplateService {
     /**
-     * Memproses template HTML dengan data yang diberikan..
+     * Processing HTML templates with the given data.
      */
     String processEmailTemplate(String templateName, Map<String, Object> variables);
 }

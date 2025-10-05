@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface INotificationService {
 
-//     Mengirim notifikasi email.
+//     Sending email notifications.
     ResponseEntity<Object> sendEmailNotification(EmailNotificationRequest request);
 
 }

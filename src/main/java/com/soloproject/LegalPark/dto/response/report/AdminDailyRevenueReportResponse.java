@@ -3,7 +3,7 @@ package com.soloproject.LegalPark.dto.response.report;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class AdminDailyRevenueReportResponse {  //DTO untuk Laporan Pendapatan Harian Admin
+public class AdminDailyRevenueReportResponse {
 
     private LocalDate date;
     private String merchantCode;

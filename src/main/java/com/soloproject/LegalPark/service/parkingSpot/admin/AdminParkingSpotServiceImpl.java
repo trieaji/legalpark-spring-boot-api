@@ -37,39 +37,39 @@ public class AdminParkingSpotServiceImpl implements IAdminParkingSpotService{
 
     @Override
     public ResponseEntity<Object> adminCreateParkingSpot(ParkingSpotRequest request) {
-        // 1. Cari Merchant berdasarkan merchantCode
+        
         Optional<Merchant> merchantOptional = merchantRepository.findByMerchantCode(request.getMerchantCode());
         if (merchantOptional.isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "Merchant not found with code: " + request.getMerchantCode());
         }
         Merchant merchant = merchantOptional.get();
 
-        // 2. Cek apakah spotNumber sudah ada di merchant yang sama (sesuai uniqueConstraint)
+
         Optional<ParkingSpot> existingSpot = parkingSpotRepository.findBySpotNumberAndMerchant(request.getSpotNumber(), merchant);
         if (existingSpot.isPresent()) {
             return ResponseHandler.generateResponseError(HttpStatus.CONFLICT, "FAILED", "Parking spot with number '" + request.getSpotNumber() + "' already exists for this merchant.");
         }
 
-        // 3. Konversi DTO ke Entity
+
         ParkingSpot parkingSpot = new ParkingSpot();
         parkingSpot.setSpotNumber(request.getSpotNumber());
         parkingSpot.setFloor(request.getFloor());
         parkingSpot.setMerchant(merchant);
 
-        // Konversi String ke Enum SpotType
+
         try {
             parkingSpot.setSpotType(SpotType.valueOf(request.getSpotType().toUpperCase()));
         } catch (IllegalArgumentException e) {
             return ResponseHandler.generateResponseError(HttpStatus.BAD_REQUEST, "FAILED", "Invalid spot type: " + request.getSpotType());
         }
 
-        // Set status awal sebagai AVAILABLE
+
         parkingSpot.setStatus(ParkingSpotStatus.AVAILABLE);
 
-        // 4. Simpan ke database
+
         ParkingSpot savedParkingSpot = parkingSpotRepository.save(parkingSpot);
 
-        // 5. Konversi Entity yang disimpan ke DTO Response
+
         ParkingSpotResponse response = parkingSpotResponseMapper.mapToParkingSpotResponse(savedParkingSpot);
         return ResponseHandler.generateResponseSuccess(response);
     }
@@ -102,11 +102,10 @@ public class AdminParkingSpotServiceImpl implements IAdminParkingSpotService{
         }
         ParkingSpot parkingSpot = parkingSpotOptional.get();
 
-        // Perbarui field yang tidak null di request
+
         if (request.getSpotNumber() != null) {
-            // Jika spotNumber diubah, cek keunikan dengan merchant saat ini
             Optional<ParkingSpot> existingSpot = parkingSpotRepository.findBySpotNumberAndMerchant(request.getSpotNumber(), parkingSpot.getMerchant());
-            if (existingSpot.isPresent() && !existingSpot.get().getId().equals(id)) { // Pastikan bukan dirinya sendiri
+            if (existingSpot.isPresent() && !existingSpot.get().getId().equals(id)) {
                 return ResponseHandler.generateResponseError(HttpStatus.CONFLICT, "FAILED", "Parking spot with number '" + request.getSpotNumber() + "' already exists for this merchant.");
             }
             parkingSpot.setSpotNumber(request.getSpotNumber());
@@ -140,13 +139,13 @@ public class AdminParkingSpotServiceImpl implements IAdminParkingSpotService{
             }
             Merchant newMerchant = newMerchantOptional.get();
 
-            // Cek keunikan spotNumber di merchant yang baru (jika spotNumber juga diubah)
+
             if (request.getSpotNumber() != null) {
                 Optional<ParkingSpot> existingSpotInNewMerchant = parkingSpotRepository.findBySpotNumberAndMerchant(request.getSpotNumber(), newMerchant);
                 if (existingSpotInNewMerchant.isPresent()) {
                     return ResponseHandler.generateResponseError(HttpStatus.CONFLICT, "FAILED", "Parking spot with number '" + request.getSpotNumber() + "' already exists for the new merchant.");
                 }
-            } else { // Jika spotNumber tidak diubah, pakai spotNumber yang lama untuk cek keunikan di merchant baru
+            } else {
                 Optional<ParkingSpot> existingSpotInNewMerchant = parkingSpotRepository.findBySpotNumberAndMerchant(parkingSpot.getSpotNumber(), newMerchant);
                 if (existingSpotInNewMerchant.isPresent()) {
                     return ResponseHandler.generateResponseError(HttpStatus.CONFLICT, "FAILED", "Parking spot with number '" + parkingSpot.getSpotNumber() + "' already exists for the new merchant.");
@@ -156,7 +155,7 @@ public class AdminParkingSpotServiceImpl implements IAdminParkingSpotService{
             parkingSpot.setMerchant(newMerchant);
         }
 
-        // Simpan perubahan
+
         ParkingSpot updatedParkingSpot = parkingSpotRepository.save(parkingSpot);
 
         ParkingSpotResponse response = parkingSpotResponseMapper.mapToParkingSpotResponse(updatedParkingSpot);

@@ -18,9 +18,9 @@ public class VehicleResponseMapper  {
         VehicleResponse response = new VehicleResponse();
         response.setId(vehicle.getId());
         response.setLicensePlate(vehicle.getLicensePlate());
-        response.setType(vehicle.getType().name()); // Konversi Enum ke String
+        response.setType(vehicle.getType().name());
 
-//        ModelMapper modelMapper = new ModelMapper(); //Aku comment karena sudah ada private ModelMapper modelMapper;
+//        ModelMapper modelMapper = new ModelMapper(); // I commented because there is already a private ModelMapper modelMapper;
         if (vehicle.getOwner() != null) {
             response.setOwner(modelMapper.map(vehicle.getOwner(), UserBasicResponse.class));
         }

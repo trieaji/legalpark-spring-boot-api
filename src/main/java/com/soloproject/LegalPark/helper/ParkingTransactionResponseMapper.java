@@ -40,7 +40,7 @@ public class ParkingTransactionResponseMapper {
             spotResponse.setStatus(transaction.getParkingSpot().getStatus().name());
             spotResponse.setFloor(transaction.getParkingSpot().getFloor());
 
-            // Mapping Merchant DTO dalam ParkingSpotResponse
+            // Mapping Merchant DTO in ParkingSpotResponse
             if (transaction.getParkingSpot().getMerchant() != null) {
                 spotResponse.setMerchant(modelMapper.map(transaction.getParkingSpot().getMerchant(), MerchantResponse.class));
             }

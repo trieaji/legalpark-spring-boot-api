@@ -66,18 +66,18 @@ public class MerchantServiceImpl implements IMerchantService{
 
     @Override
     public ResponseEntity<Object> updateExistingMerchant(String id, MerchantRequest request) {
-        // 1. Cari merchant yang ada berdasarkan ID
+        // 1. Search for merchants based on ID
         Optional<Merchant> existingMerchantOptional = merchantRepository.findById(id);
 
-        // 2. Jika merchant tidak ditemukan, kembalikan error NOT_FOUND
+        // 2. If the merchant is not found, return the NOT_FOUND error.
         if (existingMerchantOptional.isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "Merchant with ID " + id + " not found.");
         }
 
-        // 3. Ambil objek Merchant yang sudah ada dari Optional
+        // 3. Take the existing Merchant object from Optional
         Merchant existingMerchant = existingMerchantOptional.get();
 
-        // 4. Perbarui hanya properti yang disediakan (tidak null) dalam request
+        // 4. Update only the properties provided (not null) in the request
         if (request.getMerchantName() != null) {
             existingMerchant.setMerchantName(request.getMerchantName());
         }
@@ -91,7 +91,7 @@ public class MerchantServiceImpl implements IMerchantService{
             existingMerchant.setContactPhone(request.getContactPhone());
         }
 
-        // 5. Simpan (merge) perubahan ke database
+        // 5. Save changes to the database
         Merchant updatedMerchant = merchantRepository.save(existingMerchant);
         
         return ResponseHandler.generateResponseSuccess(updatedMerchant);
@@ -102,7 +102,7 @@ public class MerchantServiceImpl implements IMerchantService{
         var data = merchantRepository.findByMerchantCode(request.getMerchantCode());
 
         if (data.isPresent()) {
-            Merchant merchant = data.get(); //Ambil datanya jika sudah ditemukan atau datanya ada
+            Merchant merchant = data.get();
             
             MerchantResponse response = new MerchantResponse();
             response.setId(merchant.getId());

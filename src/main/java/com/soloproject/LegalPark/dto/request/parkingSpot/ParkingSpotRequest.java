@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 public class ParkingSpotRequest {
     @NotBlank(message = "Spot number is required")
     @Size(max = 20, message = "Spot number cannot exceed 20 characters")
-    private String spotNumber; // Misalnya "A01", "B-P05"
+    private String spotNumber; // Example "A01", "B-P05"
 
     private Integer floor;
 

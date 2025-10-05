@@ -57,11 +57,11 @@ public class UsersServiceImpl implements IUsersService {
     @Override
     public ResponseEntity<Object> verificationAccount(AccountVerification request) {
         try{
-            String user = infoAccount.get().getEmail(); //Untuk menemukan email
+            String user = infoAccount.get().getEmail(); //To find the email
 
             LogVerification verify = logVerificationRepository.getByUserAndExp(user,request.getCode()); //mendapatkan email dan code
 
-            if(verify == null){ //jika email dan code kosong maka, kembalikan error
+            if(verify == null){
                 return ResponseHandler.generateResponseError(HttpStatus.BAD_REQUEST,"FAILED","Otp yang anda masukan salah");
             }
 
@@ -88,17 +88,12 @@ public class UsersServiceImpl implements IUsersService {
             data.setAccountStatus(AccountStatus.ACTIVE);
             var save = usersRepository.save(data);
 
-//            Context context = new Context();
-//
-//            context.setVariable("name", save.getAccountName());
-//            String emailContent = templateEngine.process("email_success_verification", context);
-//            mailService.sendEmail(data.getEmail(),"Success Verification", emailContent);
 
             Map<String, Object> templateVariables = new HashMap<>();
             templateVariables.put("name", save.getAccountName());
-            String emailBody = templateService.processEmailTemplate("email_success_verification", templateVariables); // Pastikan nama template "email_success_verification" sesuai dengan nama file Anda
+            String emailBody = templateService.processEmailTemplate("email_success_verification", templateVariables);
 
-            // Gantikan mailService.sendEmail() dengan NotificationService
+
             EmailNotificationRequest emailRequest = new EmailNotificationRequest();
             emailRequest.setTo(data.getEmail());
             emailRequest.setSubject("Success Verification");
@@ -121,7 +116,7 @@ public class UsersServiceImpl implements IUsersService {
         }
         Users user = userOptional.get();
 
-        // Validasi transisi status
+
         if (user.getAccountStatus() == AccountStatus.BLOCKED && newStatus != AccountStatus.ACTIVE) {
             return ResponseHandler.generateResponseError(HttpStatus.BAD_REQUEST, "FAILED", "Cannot change status from BLOCKED directly, unless unblocked by admin.");
         }

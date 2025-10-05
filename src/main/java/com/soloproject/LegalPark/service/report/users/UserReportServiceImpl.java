@@ -44,9 +44,9 @@ public class UserReportServiceImpl implements IUserReportService {
         Users user = userOptional.get();
 
 
-        // Convert LocalDate ke LocalDateTime untuk repository query (awal hari, akhir hari)
+        // Convert LocalDate to LocalDateTime for repository queries (start of day, end of day)
         LocalDateTime startDateTime = startDate.atStartOfDay();
-        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX); // Akhir hari
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX); // End of the day
 
 
         List<ParkingTransaction> transactions = parkingTransactionRepository

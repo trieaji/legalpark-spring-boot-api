@@ -44,7 +44,7 @@ public class BalanceServiceImpl implements IBalanceService {
             }
             Users user = userOptional.get();
 
-            // Cek status akun: hanya ACTIVE yang bisa melakukan pembayaran (logika dari UsersServiceImpl)
+            // Check account status: only ACTIVE accounts can make payments (logic from UsersServiceImpl)
             if (user.getAccountStatus() != AccountStatus.ACTIVE) {
                 logger.warn("Deduct balance failed: Account is not active for transactions. User ID: {}, Current status: {}", user.getId(), user.getAccountStatus().name());
                 return ResponseHandler.generateResponseError(HttpStatus.FORBIDDEN, "FAILED", "Account is not active or verified for transactions. Current status: " + user.getAccountStatus().name());

@@ -6,55 +6,46 @@ import org.springframework.http.ResponseEntity;
 
 public interface IAdminParkingTransactionService {
 
-//     [ADMIN] Mengambil semua transaksi parkir yang ada di sistem.
-//     @return ResponseEntity berisi daftar semua transaksi parkir.
+//     [ADMIN] Retrieve all parking transactions in the system.
     ResponseEntity<Object> adminGetAllParkingTransactions();
 
 
 
-//     [ADMIN] Mengambil detail transaksi parkir berdasarkan ID transaksi.
-//     @return ResponseEntity berisi detail transaksi atau pesan error jika tidak ditemukan.
+//     [ADMIN] Retrieve parking transaction details based on transaction ID.
     ResponseEntity<Object> adminGetParkingTransactionById(String transactionId);
 
 
 
-//     [ADMIN] Mengambil semua transaksi parkir yang terkait dengan ID kendaraan tertentu.
-//     @return ResponseEntity berisi daftar transaksi parkir kendaraan tersebut.
+//     [ADMIN] Retrieve all parking transactions associated with a specific vehicle ID.
     ResponseEntity<Object> adminGetParkingTransactionsByVehicleId(String vehicleId);
 
 
 
-//     [ADMIN] Mengambil semua transaksi parkir yang terkait dengan ID slot parkir tertentu.
-//     @return ResponseEntity berisi daftar transaksi parkir di slot tersebut.
+//     [ADMIN] Retrieve all parking transactions associated with a specific parking slot ID.
     ResponseEntity<Object> adminGetParkingTransactionsByParkingSpotId(String parkingSpotId);
 
 
 
-//     [ADMIN] Mengambil semua transaksi parkir yang terkait dengan ID merchant tertentu.
-//     @return ResponseEntity berisi daftar transaksi parkir di merchant tersebut.
+//     [ADMIN] Retrieve all parking transactions associated with a specific merchant ID.
     ResponseEntity<Object> adminGetParkingTransactionsByMerchantId(String merchantId);
 
 
 
-//     [ADMIN] Mengambil semua transaksi parkir berdasarkan status parkir (ACTIVE, COMPLETED, CANCELLED).
-//     @return ResponseEntity berisi daftar transaksi parkir dengan status yang cocok.
+//     [ADMIN] Retrieve all parking transactions based on parking status (ACTIVE, COMPLETED, CANCELLED).
     ResponseEntity<Object> adminGetParkingTransactionsByParkingStatus(ParkingStatus status);
 
 
 
-//     [ADMIN] Mengambil semua transaksi parkir berdasarkan status pembayaran (PENDING, PAID, FAILED).
-//     @return ResponseEntity berisi daftar transaksi parkir dengan status pembayaran yang cocok.
+//     [ADMIN] Retrieve all parking transactions based on payment status (PENDING, PAID, FAILED).
     ResponseEntity<Object> adminGetParkingTransactionsByPaymentStatus(PaymentStatus paymentStatus);
 
 
 
-//     [ADMIN] Memperbarui status pembayaran suatu transaksi secara manual.
-//     @return ResponseEntity berisi detail transaksi yang diperbarui atau pesan error.
+//     [ADMIN] Manually updating the payment status of a transaction.
     ResponseEntity<Object> adminUpdateParkingTransactionPaymentStatus(String transactionId, PaymentStatus newPaymentStatus);
 
 
 
-//     [ADMIN] Membatalkan transaksi parkir yang sedang aktif.
-//     @return ResponseEntity konfirmasi pembatalan atau pesan error.
+//     [ADMIN] Cancel an active parking transaction.
     ResponseEntity<Object> adminCancelParkingTransaction(String transactionId);
 }

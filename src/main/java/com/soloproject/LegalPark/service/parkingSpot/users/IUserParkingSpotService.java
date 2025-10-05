@@ -6,12 +6,12 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 
 public interface IUserParkingSpotService {
-    // 1. Melihat Slot Parkir yang Tersedia (GET Available)
+    // 1. View Available Parking Spaces (GET Available)
     ResponseEntity<Object> userGetAvailableParkingSpots(AvailableSpotFilterRequest filter);
 
 
-    // 2. Melihat Slot Parkir berdasarkan Merchant (GET by Merchant for User)
+    // 2. View Parking Spaces by Merchant (GET by Merchant for User)
     ResponseEntity<Object> userGetParkingSpotsByMerchant(String merchantCode);
 
-//    Untuk users Mungkin tidak perlu mengelola slot, tetapi perlu melihat ketersediaan slot atau mencari slot yang tersedia.
+
 }

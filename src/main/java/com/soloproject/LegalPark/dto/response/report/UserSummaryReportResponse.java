@@ -2,7 +2,7 @@ package com.soloproject.LegalPark.dto.response.report;
 
 import java.math.BigDecimal;
 
-public class UserSummaryReportResponse {  // DTO untuk Laporan Ringkasan Pengguna (Opsional, tapi Berguna)
+public class UserSummaryReportResponse {
 
     private String userId;
     private String userName;

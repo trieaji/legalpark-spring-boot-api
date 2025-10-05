@@ -103,9 +103,9 @@ public class AuthServiceImpl implements IAuthService {
         Map<String, Object> templateVariables = new HashMap<>();
         templateVariables.put("otp", saveLog.getCode());
         templateVariables.put("name", data.getAccountName());
-        String emailBody = templateService.processEmailTemplate("email_verification", templateVariables); // Pastikan nama template "email_verification" sesuai dengan nama file Anda
+        String emailBody = templateService.processEmailTemplate("email_verification", templateVariables);
 
-        // Gantikan mailService.sendEmail() dengan NotificationService
+        // Replace mailService.sendEmail() with NotificationService
         EmailNotificationRequest emailRequest = new EmailNotificationRequest();
         emailRequest.setTo(data.getEmail());
         emailRequest.setSubject("Account Verification");
@@ -123,14 +123,13 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public ResponseEntity<Object> logout(String email) {
-        // Cari pengguna berdasarkan email DULU
-        Optional<Users> userOptional = usersRepository.findByEmail(email); // <<< PENTING: Gunakan findByEmail
+        Optional<Users> userOptional = usersRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "User not found.");
         }
         Users user = userOptional.get();
 
-        // Reset saldo ke 100k
+        // Reset balance to 100k
         user.setBalance(new BigDecimal("100000.00"));
         user.setUpdatedAt(LocalDateTime.now());
         usersRepository.save(user);

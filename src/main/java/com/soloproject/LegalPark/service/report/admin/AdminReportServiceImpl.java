@@ -61,7 +61,7 @@ public class AdminReportServiceImpl implements IAdminReportService{
             return ResponseHandler.generateResponseSuccess(HttpStatus.OK, "No revenue recorded for " + date + (merchantCode != null ? " at merchant " + merchantCode : "") + ".", List.of());
         }
 
-        // Mengelompokkan berdasarkan merchant jika tidak ada kode spesifik merchant yang diminta
+        // Group by merchant if no specific merchant code is requested
         if (merchantCode == null || merchantCode.isEmpty()) {
             Map<String, List<ParkingTransaction>> transactionsByMerchant = paidTransactions.stream()
                     .filter(t -> t.getParkingSpot() != null && t.getParkingSpot().getMerchant() != null)
@@ -78,7 +78,7 @@ public class AdminReportServiceImpl implements IAdminReportService{
 //            return ResponseHandler.generateResponseSuccess(HttpStatus.OK, "Daily revenue report retrieved successfully for all merchants.", responses);
             return ResponseHandler.generateResponseSuccess(responses);
         } else {
-            // Untuk merchant tertentu, hitung total pendapatan secara langsung
+            // For certain merchants, calculate total revenue directly
             BigDecimal totalRevenue = paidTransactions.stream()
                     .filter(t -> t.getTotalCost() != null)
                     .map(ParkingTransaction::getTotalCost)
@@ -150,7 +150,7 @@ public class AdminReportServiceImpl implements IAdminReportService{
                 response.setMerchantName(spot.getMerchant().getMerchantName());
             }
 
-            // Jika slot ditempati, maka cari transaksi aktif dan kendaraan yang menempati
+            // If the slot is occupied, then look for active transactions and vehicles occupying it.
             if (spot.getStatus() == ParkingSpotStatus.OCCUPIED) {
                 Optional<ParkingTransaction> activeTransactionOptional = parkingTransactionRepository.findByParkingSpotAndStatus(spot, com.soloproject.LegalPark.entity.ParkingStatus.ACTIVE);
                 if (activeTransactionOptional.isPresent()) {

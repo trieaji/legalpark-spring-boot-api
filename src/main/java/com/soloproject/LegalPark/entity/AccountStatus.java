@@ -1,9 +1,9 @@
 package com.soloproject.LegalPark.entity;
 
 public enum AccountStatus {
-    PENDING_VERIFICATION, // Akun baru terdaftar, menunggu verifikasi email
-    ACTIVE,               // Akun aktif, email sudah terverifikasi, fitur pembayaran aktif
-    INACTIVE,             // Akun dinonaktifkan (misal karena logout atau admin)
-    SUSPENDED,            // Akun ditangguhkan
-    BLOCKED               // Akun diblokir
+    PENDING_VERIFICATION, // New account registered, awaiting email verification
+    ACTIVE,               // Active account, verified email, payment feature enabled
+    INACTIVE,             // Account deactivated (e.g., due to logout or admin)
+    SUSPENDED,            // Account suspended
+    BLOCKED               // Account blocked
 }

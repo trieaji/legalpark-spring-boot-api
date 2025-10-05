@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 public interface IPaymentService {
     /**
-     * Memproses pembayaran untuk transaksi parkir tertentu.
+     * Processing payments for specific parking transactions.
      */
     PaymentResult processParkingPayment(String userId, BigDecimal amount, String parkingTransactionId, String verificationCode);
 

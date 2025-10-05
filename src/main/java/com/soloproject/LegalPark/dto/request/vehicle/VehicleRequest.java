@@ -29,11 +29,5 @@ public class VehicleRequest {
         this.type = type;
     }
 
-//    public String getMerchantCode() {
-//        return merchantCode;
-//    }
-//
-//    public void setMerchantCode(String merchantCode) {
-//        this.merchantCode = merchantCode;
-//    }
+
 }

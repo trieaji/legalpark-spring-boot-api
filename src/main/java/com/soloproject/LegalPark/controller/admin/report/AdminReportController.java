@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/api/v1/admin") // Contoh base URL untuk laporan admin
+@RequestMapping("/api/v1/admin")
 @Tag(name = "Admin Report API", description = "Endpoint untuk Admin mengelola dan melihat report parkir")
 public class AdminReportController {
 
     @Autowired
     private IAdminReportService adminReportService;
 
-    @PreAuthorize("hasRole('ADMIN')") // Contoh otorisasi
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/report/revenue/daily")
     public ResponseEntity<Object> getDailyRevenueReport(
             @RequestParam LocalDate date,
@@ -29,7 +29,7 @@ public class AdminReportController {
         return adminReportService.getDailyRevenueReport(date, merchantCode);
     }
 
-    @PreAuthorize("hasRole('ADMIN')") // Contoh otorisasi
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/report/occupancy")
     public ResponseEntity<Object> getParkingSpotOccupancyReport(
             @RequestParam(required = false) String merchantCode,

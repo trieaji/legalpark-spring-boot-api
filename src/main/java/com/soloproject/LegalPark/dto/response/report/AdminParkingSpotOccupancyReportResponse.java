@@ -1,6 +1,6 @@
 package com.soloproject.LegalPark.dto.response.report;
 
-public class AdminParkingSpotOccupancyReportResponse { // DTO untuk Laporan Tingkat Hunian Slot Parkir Admin
+public class AdminParkingSpotOccupancyReportResponse {
 
     private String spotId;
     private String spotNumber;

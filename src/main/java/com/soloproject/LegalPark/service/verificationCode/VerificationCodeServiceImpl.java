@@ -62,7 +62,6 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService{
             }
             Users user = userOptional.get();
 
-            // 1. Cari transaksi parkir yang aktif berdasarkan parkingTransactionId
             Optional<ParkingTransaction> ptOptional = parkingTransactionRepository.findById(request.getParkingTransactionId());
             if (ptOptional.isEmpty() || ptOptional.get().getStatus() != ParkingStatus.ACTIVE) {
                 return ResponseHandler.generateResponseError(HttpStatus.BAD_REQUEST, "FAILED", "Active parking transaction not found or invalid for ID: " + request.getParkingTransactionId());

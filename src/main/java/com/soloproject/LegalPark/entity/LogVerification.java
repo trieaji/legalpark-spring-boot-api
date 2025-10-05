@@ -53,11 +53,11 @@ public class LogVerification implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public String getId() { // Getter untuk String ID
+    public String getId() {
         return id;
     }
 
-    public void setId(String id) { // Setter untuk String ID
+    public void setId(String id) {
         this.id = id;
     }
 

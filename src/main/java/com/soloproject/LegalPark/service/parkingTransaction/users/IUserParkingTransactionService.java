@@ -6,39 +6,39 @@ import org.springframework.http.ResponseEntity;
 
 public interface IUserParkingTransactionService {
     /**
-     * [USER] Mencatat masuknya kendaraan ke slot parkir.
-     * Akan mencari kendaraan dan slot parkir, lalu mengubah status slot menjadi OCCUPIED.
-     * Membuat entri transaksi parkir baru dengan status ACTIVE dan PENDING pembayaran.
+     * [USER] Recording the entry of vehicles into parking slots.
+     * It will search for vehicles and parking slots, then change the slot status to OCCUPIED.
+     * Create a new parking transaction entry with ACTIVE status and PENDING payment.
      */
     ResponseEntity<Object> recordParkingEntry(ParkingEntryRequest request);
 
 
 
     /**
-     * [USER] Mencatat keluarnya kendaraan dari slot parkir dan memproses pembayaran.
-     * Akan mencari transaksi aktif berdasarkan plat nomor, menghitung biaya, memverifikasi pembayaran (misal dengan kode),
-     * mengubah status slot menjadi AVAILABLE, dan mengupdate status transaksi.
+     * [USER] Recording vehicles leaving parking spaces and processing payments.
+     * Search for active transactions based on license plate numbers, calculate fees, verify payments (e.g., with codes).
+     * Change the slot status to AVAILABLE, and update the transaction status.
      */
     ResponseEntity<Object> recordParkingExit(ParkingExitRequest request);
 
 
 
     /**
-     * [USER] Mengambil transaksi parkir yang sedang aktif (status ACTIVE) untuk plat nomor kendaraan pengguna.
+     * [USER] Retrieve active parking transactions (ACTIVE status) for the user's vehicle license plate number.
      */
     ResponseEntity<Object> getUserActiveParkingTransaction(String licensePlate);
 
 
 
     /**
-     * [USER] Mengambil riwayat semua transaksi parkir yang terkait dengan plat nomor kendaraan pengguna.
+     * [USER] Retrieve the history of all parking transactions associated with the user's vehicle license plate number.
      */
     ResponseEntity<Object> getUserParkingTransactionHistory(String licensePlate);
 
 
 
     /**
-     * [USER] Mengambil detail transaksi parkir tertentu berdasarkan ID transaksi.
+     * [USER] Retrieve specific parking transaction details based on the transaction ID.
      */
     ResponseEntity<Object> getUserParkingTransactionDetails(String transactionId, String licensePlate);
 }

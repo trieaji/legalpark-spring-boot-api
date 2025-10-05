@@ -12,22 +12,19 @@ import java.util.Optional;
 public class CodeGeneratorUtil {
     private final MerchantRepository merchantRepository; // Inject MerchantRepository
 
-    // Karakter yang bisa digunakan untuk kode pendek
+    // Characters that can be used for short codes
     private static final String ALPHANUMERIC_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int SHORT_CODE_LENGTH = 8; // Panjang kode pendek, bisa disesuaikan
     private static final SecureRandom random = new SecureRandom();
 
-    // Constructor untuk dependency injection MerchantRepository
+    // Constructor for dependency injection MerchantRepository
     @Autowired
     public CodeGeneratorUtil(MerchantRepository merchantRepository) {
         this.merchantRepository = merchantRepository;
     }
 
 
-//     Menghasilkan kode alfanumerik pendek yang unik untuk merchant.
-//     Kode ini dijamin unik dengan memeriksa di database.
-//     @return Kode merchant pendek yang unik
-
+//     Generates a unique short alphanumeric code for merchants.
     public String generateUniqueMerchantShortCode() {
         String generatedCode;
         boolean isUnique = false;
@@ -38,18 +35,15 @@ public class CodeGeneratorUtil {
             }
             generatedCode = shortCodeBuilder.toString();
 
-            // Periksa keunikan di database
-            // Pastikan findByMerchantCode ada di MerchantRepository dan mencari kode pendek
+
             Optional<Merchant> existingMerchant = merchantRepository.findByMerchantCode(generatedCode);
             if (existingMerchant.isEmpty()) {
                 isUnique = true;
             }
-            // Jika tidak unik, loop akan berlanjut dan menghasilkan kode baru
+
         } while (!isUnique);
 
         return generatedCode;
     }
 
-    // Kau bisa menambahkan metode generate kode unik lain di sini kalau kau butuh
-    // Misalnya, untuk OTP, kode promo, dll
 }

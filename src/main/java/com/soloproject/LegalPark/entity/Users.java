@@ -102,8 +102,8 @@ public class Users implements UserDetails {
         this.updatedAt = updatedAt;
     }
 
-    // --- Getters ---
-    public String getId() { // Getter untuk String ID
+
+    public String getId() {
         return id;
     }
 
@@ -143,8 +143,8 @@ public class Users implements UserDetails {
         return updatedAt;
     }
 
-    // --- Setters ---
-    public void setId(String id) { // Setter untuk String ID
+
+    public void setId(String id) {
         this.id = id;
     }
 

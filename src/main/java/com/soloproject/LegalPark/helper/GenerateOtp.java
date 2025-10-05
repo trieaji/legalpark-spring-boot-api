@@ -10,9 +10,6 @@ public class GenerateOtp {
     }
 
     public static LocalDateTime getExpiryDate() {
-//        LocalDate today = LocalDate.now();
-//        LocalDate expiryDate = today.plusDays(1);
-//        return expiryDate;
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime expiryDate = today.plusDays(1);
         return expiryDate;

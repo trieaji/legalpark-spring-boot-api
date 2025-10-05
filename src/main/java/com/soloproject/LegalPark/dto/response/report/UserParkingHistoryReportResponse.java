@@ -6,7 +6,7 @@ import com.soloproject.LegalPark.dto.response.vehicle.VehicleResponse;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class UserParkingHistoryReportResponse { //DTO untuk Laporan Riwayat Parkir Pengguna
+public class UserParkingHistoryReportResponse {
 
     private String transactionId;
     private LocalDateTime entryTime;

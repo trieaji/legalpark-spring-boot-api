@@ -3,7 +3,7 @@ package com.soloproject.LegalPark.service.vehicle.admin;
 import com.soloproject.LegalPark.dto.request.vehicle.VehicleRequest;
 import org.springframework.http.ResponseEntity;
 
-public interface IAdminVehicleService { // menangani siapa yang parkir (kendaraannya).
+public interface IAdminVehicleService {
     ResponseEntity<Object> adminRegisterVehicle(VehicleRequest request);
     ResponseEntity<Object> adminGetAllVehicles();
     ResponseEntity<Object> adminGetVehicleById(String id);

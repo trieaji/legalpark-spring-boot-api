@@ -44,7 +44,7 @@ public class PaymentVerificationCode {
         this.code = code;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.isVerified = false; // Default
+        this.isVerified = false; 
     }
 
     public String getId() {

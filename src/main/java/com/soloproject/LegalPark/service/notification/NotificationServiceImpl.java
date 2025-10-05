@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NotificationServiceImpl implements INotificationService{
-    // --- Deklarasi Field di Tingkat Kelas ---
+
     private static final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
     @Autowired

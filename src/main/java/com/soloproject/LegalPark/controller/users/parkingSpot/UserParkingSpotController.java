@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/user") // Base path untuk semua endpoint user
+@RequestMapping("/api/v1/user")
 @Tag(name = "User Parking Spot API", description = "Endpoint untuk pengguna (User) melihat informasi slot parkir")
 public class UserParkingSpotController {
 
@@ -18,9 +18,9 @@ public class UserParkingSpotController {
 
 
 
-//     Endpoint untuk pengguna mencari slot parkir yang tersedia dengan berbagai filter.
-//     Filter dapat berupa merchantCode, spotType, dan floor.
-//     Contoh: GET /api/v1/users/parking-spots/available?merchantCode=MERCH001&spotType=CAR&floor=2
+    //  Endpoint for users to search for available parking spots with various filters.
+    //  Filters can be merchantCode, spotType, and floor.
+    //  Example: GET /api/v1/users/parking-spots/available?merchantCode=MERCH001&spotType=CAR&floor=2
     @GetMapping("/parking-spots/available")
     public ResponseEntity<Object> getAvailableParkingSpots(
             @Valid @ModelAttribute AvailableSpotFilterRequest filter) {
@@ -31,8 +31,8 @@ public class UserParkingSpotController {
 
 
 
-//     Endpoint untuk pengguna melihat semua slot parkir (tersedia maupun terisi) di suatu merchant berdasarkan kode merchant.
-//     Contoh: GET /api/v1/users/parking-spots/by-merchant/MERCH001
+    // Endpoint for users to view all parking spots (available and occupied) at a merchant based on merchant code.
+    // Example: GET /api/v1/users/parking-spots/by-merchant/MERCH001
     @GetMapping("/parking-spots/by-merchant/{merchantCode}")
     public ResponseEntity<Object> getParkingSpotsByMerchant(@PathVariable("merchantCode") String merchantCode) {
         return iUserParkingSpotService.userGetParkingSpotsByMerchant(merchantCode);

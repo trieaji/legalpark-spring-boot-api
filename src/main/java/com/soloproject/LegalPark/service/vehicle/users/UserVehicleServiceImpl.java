@@ -48,7 +48,7 @@ public class UserVehicleServiceImpl implements IUserVehicleService {
             return ResponseHandler.generateResponseError(HttpStatus.UNAUTHORIZED, "FAILED", "User not authenticated. Please log in.");
         }
 
-        // cek AccountStatus pengguna
+        // Check user AccountStatus
         if (currentUser.getAccountStatus() != AccountStatus.ACTIVE) {
             return ResponseHandler.generateResponseError(HttpStatus.FORBIDDEN, "FAILED", "Account is not active. Please verify your email first.");
         }
@@ -57,7 +57,7 @@ public class UserVehicleServiceImpl implements IUserVehicleService {
 //        Contoh cara mengambil data
 //        Merchant merchant = merchantOptional.get();
 
-        // Periksa apakah plat nomor sudah ada (jika license_plate unique)
+        // Check if the license plate already exists (if license_plate is unique)
         if (vehicleRepository.findByLicensePlate(request.getLicensePlate()).isPresent()) {
             return ResponseHandler.generateResponseError(HttpStatus.CONFLICT, "FAILED", "Vehicle with this license plate is already registered.");
         }
@@ -66,10 +66,10 @@ public class UserVehicleServiceImpl implements IUserVehicleService {
         Vehicle vehicleMapper = modelMapper.map(request, Vehicle.class);
         vehicleMapper.setLicensePlate(request.getLicensePlate());
         try {
-            // Konversi String dari request menjadi VehicleType enum
-            vehicleMapper.setType(VehicleType.valueOf(request.getType().toUpperCase())); // Mengubah ke UPPERCASE karena enum biasanya UPPERCASE
+            // Convert the string from the request to the VehicleType enum
+            vehicleMapper.setType(VehicleType.valueOf(request.getType().toUpperCase())); // Change to UPPERCASE because enums are usually UPPERCASE
         } catch (IllegalArgumentException e) {
-            // Jika string type dari request tidak cocok dengan nama enum yang valid
+            // If the string type of the request does not match a valid enum name
             return ResponseHandler.generateResponseError(HttpStatus.BAD_REQUEST, "FAILED",
                     "Invalid vehicle type provided: " + request.getType() + ". Allowed types: " +
                             java.util.Arrays.toString(VehicleType.values()));
@@ -95,7 +95,6 @@ public class UserVehicleServiceImpl implements IUserVehicleService {
     public ResponseEntity<Object> UserGetAllVehicle() {
         List<Vehicle> vehicles = vehicleRepository.findAll();
         List<VehicleResponse> responses = vehicles.stream()
-                // Panggil metode dari helper yang di-autowire
                 .map(vehicleResponseMapper::mapToVehicleResponse)
                 .collect(Collectors.toList());
         return ResponseHandler.generateResponseSuccess(responses);
@@ -118,19 +117,19 @@ public class UserVehicleServiceImpl implements IUserVehicleService {
             return ResponseHandler.generateResponseError(HttpStatus.UNAUTHORIZED, "FAILED", "User not authenticated. Please log in.");
         }
 
-        // cek AccountStatus pengguna
+        // Check user AccountStatus
         if (currentUser.getAccountStatus() != AccountStatus.ACTIVE) {
             return ResponseHandler.generateResponseError(HttpStatus.FORBIDDEN, "FAILED", "Account is not active. Please verify your email first.");
         }
 
         Optional<Vehicle> vehicleOptional = vehicleRepository.findById(id);
 
-        // Jika vehicle tidak ditemukan, kembalikan error NOT_FOUND
+        // If the vehicle is not found, return the error NOT_FOUND
         if (vehicleOptional.isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "Vehicle with ID " + id + " not found.");
         }
 
-        // Ambil objek Vehicle yang sudah ada dari Optional
+        // Take the existing Vehicle object from Optional
         Vehicle existingVehicle = vehicleOptional.get();
 
 
@@ -147,7 +146,7 @@ public class UserVehicleServiceImpl implements IUserVehicleService {
         VehicleResponse response = new VehicleResponse();
         response.setId(updateVehicle.getId());
         response.setLicensePlate(updateVehicle.getLicensePlate());
-        response.setType(updateVehicle.getType().name()); // Konversi Enum kembali ke String
+        response.setType(updateVehicle.getType().name());
 
 
         ModelMapper modelMapper = new ModelMapper();

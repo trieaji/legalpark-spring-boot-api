@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping("/api/v1/payment/verification") // Base path untuk semua endpoint user
+@RequestMapping("/api/v1/payment/verification")
 @Tag(name = "verification code API", description = "Memungkinkan klien (aplikasi mobile/web) untuk secara langsung berinteraksi dengan langkah-langkah yang melibatkan kode verifikasi (meminta dan memverifikasi)")
 public class VerificationCodeController {
 
@@ -25,10 +25,7 @@ public class VerificationCodeController {
     @Autowired
     private IVerificationCodeService verificationCodeService; // Inject service kita
 
-    /**
-     * Endpoint untuk meminta (generate dan kirim) kode verifikasi pembayaran.
-     * Klien akan memanggil ini untuk memulai proses verifikasi pembayaran.
-     */
+
     @PostMapping("/generate")
     public ResponseEntity<Object> generatePaymentVerificationCode(
             @Validated @RequestBody PaymentVerificationCodeRequest request) {
@@ -36,10 +33,7 @@ public class VerificationCodeController {
         return verificationCodeService.generateAndSendPaymentVerificationCode(request);
     }
 
-    /**
-     * Endpoint untuk memvalidasi kode verifikasi pembayaran yang diterima pengguna.
-     * Klien akan memanggil ini setelah pengguna memasukkan kode OTP.
-     */
+
     @PostMapping("/validate")
     public ResponseEntity<Object> validatePaymentVerificationCode(
             @Validated @RequestBody VerifyPaymentCodeRequest request) {

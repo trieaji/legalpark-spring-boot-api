@@ -38,7 +38,7 @@ public class UserParkingSpotServiceImpl implements IUserParkingSpotService {
     public ResponseEntity<Object> userGetAvailableParkingSpots(AvailableSpotFilterRequest filter) {
         List<ParkingSpot> availableSpots;
 
-        // Logika filter:
+        // filter logic:
         if (filter.getMerchantCode() != null && !filter.getMerchantCode().isEmpty()) {
             Optional<Merchant> merchantOptional = merchantRepository.findByMerchantCode(filter.getMerchantCode());
             if (merchantOptional.isEmpty()) {
@@ -56,14 +56,14 @@ public class UserParkingSpotServiceImpl implements IUserParkingSpotService {
             }
 
             if (spotTypeFilter != null) {
-                // Cari berdasarkan merchant, status AVAILABLE, dan spot type
+                // Search by merchant, AVAILABLE status, and spot type
                 availableSpots = parkingSpotRepository.findByMerchantAndStatusAndSpotType(merchant, ParkingSpotStatus.AVAILABLE, spotTypeFilter);
             } else {
-                // Cari berdasarkan merchant dan status AVAILABLE
+                // Search by merchant and AVAILABLE status
                 availableSpots = parkingSpotRepository.findByMerchantAndStatus(merchant, ParkingSpotStatus.AVAILABLE);
             }
 
-            // Tambahkan filter floor jika ada
+            // Add a floor filter if available.
             if (filter.getFloor() != null) {
                 availableSpots = availableSpots.stream()
                         .filter(spot -> spot.getFloor() != null && spot.getFloor().equals(filter.getFloor()))
@@ -71,7 +71,7 @@ public class UserParkingSpotServiceImpl implements IUserParkingSpotService {
             }
 
         } else {
-            // Jika tidak ada merchantCode, cari semua yang AVAILABLE di seluruh sistem
+            // If there is no merchantCode, search for everything that is AVAILABLE throughout the system.
             availableSpots = parkingSpotRepository.findByStatus(ParkingSpotStatus.AVAILABLE);
 
             // Tambahkan filter floor jika ada (hanya jika tidak difilter berdasarkan merchant)
@@ -81,7 +81,7 @@ public class UserParkingSpotServiceImpl implements IUserParkingSpotService {
                         .collect(Collectors.toList());
             }
 
-            // Tambahkan filter spotType jika ada (hanya jika tidak difilter berdasarkan merchant)
+            // Add the spotType filter if available (only if not filtered by merchant)
             if (filter.getSpotType() != null && !filter.getSpotType().isEmpty()) {
                 SpotType spotTypeFilter = null;
                 try {

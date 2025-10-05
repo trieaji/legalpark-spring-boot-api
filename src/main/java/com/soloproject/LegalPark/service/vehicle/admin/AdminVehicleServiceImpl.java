@@ -44,7 +44,7 @@ public class AdminVehicleServiceImpl implements IAdminVehicleService {
 
     @Override
     public ResponseEntity<Object> adminRegisterVehicle(VehicleRequest request) {
-        // Validasi ownerId
+        // Validation of ownerId
         if (request.getOwnerId() == null || request.getOwnerId().isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.BAD_REQUEST, "FAILED", "Owner ID is required for admin to create vehicle.");
         }
@@ -55,7 +55,7 @@ public class AdminVehicleServiceImpl implements IAdminVehicleService {
         Users owner = userOptional.get();
 
 
-        // Cek duplikasi plat nomor (masih penting, bahkan untuk admin)
+        // Check for duplicate license plates (still important, even for administrators)
         if (vehicleRepository.findByLicensePlate(request.getLicensePlate()).isPresent()) {
             return ResponseHandler.generateResponseError(HttpStatus.CONFLICT, "FAILED", "Vehicle with this license plate is already registered.");
         }

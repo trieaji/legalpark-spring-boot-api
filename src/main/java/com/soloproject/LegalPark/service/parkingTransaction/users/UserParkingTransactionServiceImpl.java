@@ -51,11 +51,11 @@ public class UserParkingTransactionServiceImpl implements IUserParkingTransactio
     @Autowired
     ParkingTransactionResponseMapper parkingTransactionResponseMapper;
 
-    // Inject NotificationService dan TemplateService
+    // Inject NotificationService and TemplateService
     private final INotificationService iNotificationService;
     private final ITemplateService iTemplateService;
 
-    // Pastikan Anda menginjeksikan ini di constructor
+
     public UserParkingTransactionServiceImpl(INotificationService iNotificationService, ITemplateService iTemplateService) {
         this.iNotificationService = iNotificationService;
         this.iTemplateService = iTemplateService;
@@ -64,30 +64,30 @@ public class UserParkingTransactionServiceImpl implements IUserParkingTransactio
 
     @Override
     public ResponseEntity<Object> recordParkingEntry(ParkingEntryRequest request) {
-        // 1. Cari Kendaraan
+        // 1. Search Vehicle
         Optional<Vehicle> vehicleOptional = vehicleRepository.findByLicensePlate(request.getLicensePlate());
         if (vehicleOptional.isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "Vehicle with license plate '" + request.getLicensePlate() + "' not registered.");
         }
         Vehicle vehicle = vehicleOptional.get();
 
-        // 2. Cari Merchant
+        // 2. Search Merchants
         Optional<Merchant> merchantOptional = merchantRepository.findByMerchantCode(request.getMerchantCode());
         if (merchantOptional.isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "Merchant not found with code: " + request.getMerchantCode());
         }
         Merchant merchant = merchantOptional.get();
 
-        // 3. Cek apakah kendaraan sudah memiliki transaksi aktif
+        // 3. Check whether the vehicle already has active transactions
         Optional<ParkingTransaction> activeTransaction = parkingTransactionRepository.findByVehicleAndStatus(vehicle, ParkingStatus.ACTIVE);
         if (activeTransaction.isPresent()) {
             return ResponseHandler.generateResponseError(HttpStatus.CONFLICT, "FAILED", "Vehicle '" + request.getLicensePlate() + "' already has an active parking session.");
         }
 
-        // 4. Alokasi Slot Parkir
+        // 4. Parking Space Allocation
         ParkingSpot parkingSpot;
         if (request.getSpotNumber() != null && !request.getSpotNumber().isEmpty()) {
-            // Coba alokasikan spot spesifik
+            // Try to allocate a specific spot
             Optional<ParkingSpot> specificSpot = parkingSpotRepository.findBySpotNumberAndMerchant(request.getSpotNumber(), merchant);
             if (specificSpot.isEmpty()) {
                 return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "Parking spot '" + request.getSpotNumber() + "' not found at merchant '" + request.getMerchantCode() + "'.");
@@ -97,25 +97,25 @@ public class UserParkingTransactionServiceImpl implements IUserParkingTransactio
                 return ResponseHandler.generateResponseError(HttpStatus.CONFLICT, "FAILED", "Parking spot '" + request.getSpotNumber() + "' is not available. Current status: " + parkingSpot.getStatus().name());
             }
         } else {
-            // Alokasikan spot tersedia secara otomatis
+            // Automatically allocate available spots
             List<ParkingSpot> availableSpots = parkingSpotRepository.findByMerchantAndStatus(merchant, ParkingSpotStatus.AVAILABLE);
             if (availableSpots.isEmpty()) {
                 return ResponseHandler.generateResponseError(HttpStatus.SERVICE_UNAVAILABLE, "FAILED", "No available parking spots at merchant '" + request.getMerchantCode() + "'.");
             }
-            parkingSpot = availableSpots.get(0); // Ambil spot pertama yang tersedia
+            parkingSpot = availableSpots.get(0); // Take the first available spot
         }
 
-        // 5. Update Status Slot Parkir
+        // 5. Update Parking Space Status
         parkingSpot.setStatus(ParkingSpotStatus.OCCUPIED);
-        parkingSpotRepository.save(parkingSpot); // Simpan perubahan status spot
+        parkingSpotRepository.save(parkingSpot);
 
-        // 6. Buat Transaksi Parkir Baru
+        // 6. Create a New Parking Transaction
         ParkingTransaction newTransaction = new ParkingTransaction();
         newTransaction.setVehicle(vehicle);
         newTransaction.setParkingSpot(parkingSpot);
         newTransaction.setEntryTime(LocalDateTime.now());
-        newTransaction.setStatus(ParkingStatus.ACTIVE); // Transaksi aktif
-        newTransaction.setPaymentStatus(PaymentStatus.PENDING); // Pembayaran masih menunggu
+        newTransaction.setStatus(ParkingStatus.ACTIVE); 
+        newTransaction.setPaymentStatus(PaymentStatus.PENDING);
 
         ParkingTransaction savedTransaction = parkingTransactionRepository.save(newTransaction);
 
@@ -127,46 +127,39 @@ public class UserParkingTransactionServiceImpl implements IUserParkingTransactio
     @Override
     @Transactional
     public ResponseEntity<Object> recordParkingExit(ParkingExitRequest request) {
-        // 1. Cari Kendaraan
+        // Search for Vehicles
         Optional<Vehicle> vehicleOptional = vehicleRepository.findByLicensePlate(request.getLicensePlate());
         if (vehicleOptional.isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "Vehicle with license plate '" + request.getLicensePlate() + "' not registered.");
         }
         Vehicle vehicle = vehicleOptional.get();
 
-        // 2. Cari Merchant
+        // Search for Merchant
         Optional<Merchant> merchantOptional = merchantRepository.findByMerchantCode(request.getMerchantCode());
         if (merchantOptional.isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "Merchant not found with code: " + request.getMerchantCode());
         }
         Merchant merchant = merchantOptional.get();
 
-        // 3. Cari transaksi aktif untuk kendaraan ini di merchant yang sama
+        // Search for active transactions for this vehicle at the same merchant
         Optional<ParkingTransaction> activeTransactionOptional = parkingTransactionRepository.findByVehicleAndStatus(vehicle, ParkingStatus.ACTIVE);
         if (activeTransactionOptional.isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "No active parking session found for vehicle '" + request.getLicensePlate() + "'.");
         }
         ParkingTransaction activeTransaction = activeTransactionOptional.get();
 
-        // Verifikasi bahwa transaksi aktif memang di merchant yang sama (opsional, tapi baik untuk validasi)
+        // Verify that the active transaction is indeed at the same merchant (optional, but good for validation)
         if (!activeTransaction.getParkingSpot().getMerchant().getMerchantCode().equals(request.getMerchantCode())) {
             return ResponseHandler.generateResponseError(HttpStatus.BAD_REQUEST, "FAILED", "Active parking session for this vehicle is not at the specified merchant.");
         }
 
-        // 4. Verifikasi Kode Pembayaran (Simulasi Sederhana)
-        // Dalam implementasi nyata, ini akan berinteraksi dengan VerificationCodeService
-//        if (!"123456".equals(request.getVerificationCode())) { // Contoh kode verifikasi hardcoded
-//            return ResponseHandler.generateResponseError(HttpStatus.BAD_REQUEST, "FAILED", "Invalid verification code.");
-//        }
 
-
-
-        // 5. Update Waktu Keluar & Hitung Durasi
+        // Update Waktu Keluar & Hitung Durasi
         activeTransaction.setExitTime(LocalDateTime.now());
 //        Duration duration = Duration.between(activeTransaction.getEntryTime(), activeTransaction.getExitTime());
 //        long durationMinutes = duration.toMinutes();
 
-        // 6. Hitung Biaya Parkir (Simulasi Sederhana)
+        // Hitung Biaya Parkir (Simulasi Sederhana)
         // Ini akan sangat bergantung pada model pricing Anda (misal: tarif per jam merchant)
 //        BigDecimal hourlyRate = new BigDecimal("5000"); // Contoh: Rp 5.000 per jam
 //        long hours = (durationMinutes + 59) / 60; // Pembulatan ke atas per jam
@@ -177,36 +170,15 @@ public class UserParkingTransactionServiceImpl implements IUserParkingTransactio
         BigDecimal totalCost = calculateParkingCost(activeTransaction); // <-- Panggil metode baru
         activeTransaction.setTotalCost(totalCost);
 
-        // 7. Proses Pembayaran (Simulasi Sederhana)
-        // Dalam implementasi nyata, ini akan berinteraksi dengan BalanceService/PaymentService
-        /*boolean paymentSuccessful = true; // Asumsikan pembayaran selalu berhasil untuk simulasi
-        activeTransaction.setPaymentStatus(paymentSuccessful ? PaymentStatus.PAID : PaymentStatus.FAILED);
-
-        // 8. Update Status Transaksi Parkir
-        activeTransaction.setStatus(ParkingStatus.COMPLETED); // Transaksi selesai
-
-        // 9. Update Status Slot Parkir
-        ParkingSpot parkingSpot = activeTransaction.getParkingSpot();
-        parkingSpot.setStatus(ParkingSpotStatus.AVAILABLE);
-        parkingSpotRepository.save(parkingSpot); // Simpan perubahan status slot
-
-        // 10. Simpan Transaksi yang Sudah Diperbarui
-        ParkingTransaction updatedTransaction = parkingTransactionRepository.save(activeTransaction);
-
-//        String message = "Vehicle exited successfully. Total cost: " + totalCost + ". Payment status: " + updatedTransaction.getPaymentStatus().name();
-//        return ResponseHandler.generateResponseSuccess(message, parkingTransactionResponseMapper.mapToParkingTransactionResponse(updatedTransaction));
-        ParkingTransactionResponse response = parkingTransactionResponseMapper.mapToParkingTransactionResponse(updatedTransaction);
-
-        return ResponseHandler.generateResponseSuccess(response);*/
 
         // Proses Pembayaran via PaymentService (Metode baru)
         if (vehicle.getOwner() == null || vehicle.getOwner().getId() == null) {
 //            return ResponseHandler.generateResponseError(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED", "Vehicle owner information missing for payment. Cannot process payment.");
-            // Rollback akan otomatis terjadi karena ini RuntimeException
+            
             throw new RuntimeException("Vehicle owner information missing for payment. Cannot process payment.");
         }
 
-        // PANGGILAN BARU KE PAYMENTSERVICE DENGAN PARAMETER verificationCode
+        // NEW CALL TO PAYMENTSERVICE WITH THE verificationCode PARAMETER
         PaymentResult paymentResult = paymentService.processParkingPayment(
                 vehicle.getOwner().getId(),
                 totalCost,
@@ -214,22 +186,22 @@ public class UserParkingTransactionServiceImpl implements IUserParkingTransactio
                 request.getVerificationCode()
         );
 
-        // 8. Berdasarkan hasil pembayaran, perbarui status transaksi parkir
+        // 8. Based on the payment results, update the parking transaction status.
         if (paymentResult == PaymentResult.SUCCESS) {
             activeTransaction.setPaymentStatus(PaymentStatus.PAID);
             activeTransaction.setStatus(ParkingStatus.COMPLETED);
 
-            // 9. Update Status Slot Parkir
+            // 9. Update Parking Space Status
             ParkingSpot parkingSpot = activeTransaction.getParkingSpot();
             if (parkingSpot != null) {
                 parkingSpot.setStatus(ParkingSpotStatus.AVAILABLE);
                 parkingSpotRepository.save(parkingSpot);
             }
 
-            // 10. Simpan Transaksi yang Sudah Diperbarui
+            // 10. Save Updated Transactions
             ParkingTransaction updatedTransaction = parkingTransactionRepository.save(activeTransaction);
 
-            try { // AWAL PENGIRIMAN EMAIL
+            try { // START OF EMAIL DELIVERY
                 Map<String, Object> templateVariables = new HashMap<>();
                 templateVariables.put("name", vehicle.getOwner().getAccountName());
                 templateVariables.put("licensePlate", updatedTransaction.getVehicle().getLicensePlate());
@@ -251,23 +223,23 @@ public class UserParkingTransactionServiceImpl implements IUserParkingTransactio
             } catch (Exception emailEx) {
                 logger.error("Failed to send payment confirmation email to user {}: {}", vehicle.getOwner().getId(), emailEx.getMessage(), emailEx);
 
-            }  // AKHIR PENGIRIMAN EMAIL
+            }  // END OF EMAIL DELIVERY
 
 
             String successMessage = "Vehicle exited successfully. Payment successful. Total cost: Rp " + totalCost.toPlainString();
             return ResponseHandler.generateResponseSuccess(parkingTransactionResponseMapper.mapToParkingTransactionResponse(updatedTransaction));
 
         } else if (paymentResult == PaymentResult.INSUFFICIENT_BALANCE) {
-            activeTransaction.setPaymentStatus(PaymentStatus.FAILED); // Pembayaran gagal karena saldo tidak cukup
+            activeTransaction.setPaymentStatus(PaymentStatus.FAILED); // Payment failed due to insufficient balance
 
-            parkingTransactionRepository.save(activeTransaction); // Simpan status gagal di DB
+            parkingTransactionRepository.save(activeTransaction);
 
             return ResponseHandler.generateResponseError(HttpStatus.BAD_REQUEST, "FAILED", "Insufficient balance. Total cost: Rp " + totalCost.toPlainString() + ".");
 
         } else {
-            activeTransaction.setPaymentStatus(PaymentStatus.FAILED); // Pembayaran gagal karena alasan lain
+            activeTransaction.setPaymentStatus(PaymentStatus.FAILED);
 
-            parkingTransactionRepository.save(activeTransaction); // Simpan status gagal di DB
+            parkingTransactionRepository.save(activeTransaction);
 
             String errorMessage = "Payment failed. Please check your verification code and try again.";
 
@@ -276,7 +248,7 @@ public class UserParkingTransactionServiceImpl implements IUserParkingTransactio
     }
 
     /**
-     * Menghitung total biaya parkir berdasarkan durasi.
+     * Calculate the total parking cost based on duration.
      */
     private BigDecimal calculateParkingCost(ParkingTransaction transaction) {
         if (transaction.getEntryTime() == null || transaction.getExitTime() == null) {
@@ -341,7 +313,7 @@ public class UserParkingTransactionServiceImpl implements IUserParkingTransactio
         }
         ParkingTransaction transaction = transactionOptional.get();
 
-        // Validasi keamanan: Pastikan transaksi ini milik kendaraan yang memiliki plat nomor yang diberikan
+        // Security validation: Ensure that this transaction belongs to the vehicle with the specified license plate number.
         if (!transaction.getVehicle().getLicensePlate().equals(licensePlate)) {
             return ResponseHandler.generateResponseError(HttpStatus.FORBIDDEN, "FAILED", "Access denied. This transaction does not belong to the specified vehicle.");
         }

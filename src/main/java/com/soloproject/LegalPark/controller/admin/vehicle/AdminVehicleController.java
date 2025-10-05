@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@RestController("adminVehicleController") // <-- Tambahkan nama bean di sini. Jika ingin nama controller nya sama
+//@RestController("adminVehicleController") // <-- Add the bean name here. If you want the controller name to be the same
 @RequestMapping("/api/v1/admin")
 @Tag(name = "Admin Vehicle API", description = "Endpoint for Vehicle Management by Admin")
 public class AdminVehicleController {

@@ -36,55 +36,51 @@ public class PaymentServiceImpl implements IPaymentService{
     @Autowired
     private ParkingTransactionRepository parkingTransactionRepository;
 
-    /**
-     * Memproses pembayaran simulasi untuk transaksi parkir.
-     */
+
     @Override
     public PaymentResult processParkingPayment(String userId, BigDecimal amount, String parkingTransactionId, String verificationCode) {
-        // Logika simulasi pembayaran
+
         System.out.println("Processing payment for User ID: " + userId +
                 ", Amount: " + amount +
                 ", Parking Transaction ID: " + parkingTransactionId);
 
-        // =========================================================
-        // 1. Validasi Kode Verifikasi Pembayaran
-        // =========================================================
+
+        // 1. Payment Verification Code Validation
         VerifyPaymentCodeRequest verifyCodeRequest = new VerifyPaymentCodeRequest();
-        verifyCodeRequest.setUserId(userId); // Gunakan userId dari parameter
+        verifyCodeRequest.setUserId(userId);
         verifyCodeRequest.setCode(verificationCode);
         verifyCodeRequest.setParkingTransactionId(parkingTransactionId);
 
-        // Panggilan ke VerificationCodeService untuk validasi
+        // Call to VerificationCodeService for validation
         ResponseEntity<Object> verificationResponse = verificationCodeService.validatePaymentVerificationCode(verifyCodeRequest);
 
         if (verificationResponse.getStatusCode() != HttpStatus.OK) {
             System.out.println("Payment FAILED: Verification code invalid or expired for User ID: " + userId);
 
-            // Contoh: Mengambil pesan error dari verificationResponse
+            // Example: Retrieving error messages from verificationResponse
             if (verificationResponse.getBody() instanceof Map) {
                 Map<String, Object> errorBody = (Map<String, Object>) verificationResponse.getBody();
                 if (errorBody.containsKey("message")) {
                     System.out.println("Verification Error Message: " + errorBody.get("message"));
                 }
             }
-            return PaymentResult.FAILED_OTHER; // Atau buat enum PaymentResult.INVALID_VERIFICATION_CODE
+            return PaymentResult.FAILED_OTHER; // Or create an enum PaymentResult.INVALID_VERIFICATION_CODE
         }
         System.out.println("Verification code validated successfully for User ID: " + userId);
 
 
 
-        // 2. Memanggil BalanceService untuk mengurangi saldo
-        // Buat objek permintaan untuk BalanceService
+        // 2. Call BalanceService to reduce the balance
+        // Create a request object for BalanceService
         DeductBalanceRequest deductRequest = new DeductBalanceRequest(userId, amount);
 
-        // Memanggil UsersService untuk mengurangi saldo
+        // Call UsersService to reduce the balance
 //        ResponseEntity<Object> deductResponse = usersService.deduct(userId, amount);
         ResponseEntity<Object> deductResponse = balanceService.deductBalance(deductRequest);
 
         if (deductResponse.getStatusCode() == HttpStatus.OK) {
-            // 3. Update Status Transaksi Parkir (INI PENTING)
-            // Contoh implementasi di sini:
-            if (parkingTransactionRepository != null) { // Pastikan repository tidak null jika disuntikkan
+            // 3. Update Parking Transaction Status
+            if (parkingTransactionRepository != null) {
                 Optional<ParkingTransaction> ptOpt = parkingTransactionRepository.findById(parkingTransactionId);
                 if (ptOpt.isPresent()) {
                     ParkingTransaction pt = ptOpt.get();
@@ -93,11 +89,11 @@ public class PaymentServiceImpl implements IPaymentService{
                     System.out.println("Parking Transaction " + parkingTransactionId + " updated to PAID.");
                 } else {
                     System.err.println("Warning: Parking Transaction " + parkingTransactionId + " not found after payment. This might indicate a data inconsistency.");
-                    return PaymentResult.FAILED_OTHER; // Mengembalikan gagal karena update transaksi parkir bermasalah
+                    return PaymentResult.FAILED_OTHER; // Returned due to a failed parking transaction update
                 }
             } else {
                 System.err.println("Warning: ParkingTransactionRepository not injected. Cannot update parking transaction status.");
-                return PaymentResult.FAILED_OTHER; // Mengembalikan gagal karena repository tidak tersedia
+                return PaymentResult.FAILED_OTHER; // Returned failed because repository is not available
             }
             
             System.out.println("Payment SUCCESS for User ID: " + userId);

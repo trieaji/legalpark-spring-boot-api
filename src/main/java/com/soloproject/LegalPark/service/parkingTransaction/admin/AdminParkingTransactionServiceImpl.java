@@ -80,11 +80,11 @@ public class AdminParkingTransactionServiceImpl implements IAdminParkingTransact
 
     @Override
     public ResponseEntity<Object> adminGetParkingTransactionsByMerchantId(String merchantId) {
-        Optional<Merchant> merchantOptional = merchantRepository.findById(merchantId); // Asumsi merchantId adalah ID DB
+        Optional<Merchant> merchantOptional = merchantRepository.findById(merchantId);
         if (merchantOptional.isEmpty()) {
             return ResponseHandler.generateResponseError(HttpStatus.NOT_FOUND, "FAILED", "Merchant not found with ID: " + merchantId);
         }
-        // Mencari transaksi berdasarkan merchant melalui parking spot
+        // Searching for transactions by merchant through parking spots
         List<ParkingTransaction> transactions = parkingTransactionRepository.findByParkingSpot_Merchant(merchantOptional.get());
         List<ParkingTransactionResponse> responses = transactions.stream()
                 .map(parkingTransactionResponseMapper::mapToParkingTransactionResponse)
@@ -118,7 +118,7 @@ public class AdminParkingTransactionServiceImpl implements IAdminParkingTransact
         }
         ParkingTransaction transaction = transactionOptional.get();
 
-        // Anda bisa menambahkan validasi di sini, misalnya tidak boleh mengubah status ke PAID jika sudah FAILED kecuali ada mekanisme retry
+
         transaction.setPaymentStatus(newPaymentStatus);
         ParkingTransaction updatedTransaction = parkingTransactionRepository.save(transaction);
 
@@ -133,18 +133,18 @@ public class AdminParkingTransactionServiceImpl implements IAdminParkingTransact
         }
         ParkingTransaction transaction = transactionOptional.get();
 
-        // Validasi: Hanya transaksi ACTIVE atau PENDING yang bisa dibatalkan secara manual
+        // Validation: Only ACTIVE or PENDING transactions can be canceled manually.
         if (transaction.getStatus() == ParkingStatus.COMPLETED) {
             return ResponseHandler.generateResponseError(HttpStatus.BAD_REQUEST, "FAILED", "Completed transactions cannot be cancelled.");
         }
 
-        // Untuk tujuan pembatalan, fokus ke ParkingStatus
+        // For cancellation purposes, focus on ParkingStatus
         if (transaction.getStatus() == ParkingStatus.CANCELLED) {
             return ResponseHandler.generateResponseError(HttpStatus.CONFLICT, "FAILED", "Transaction is already cancelled.");
         }
 
 
-        // Jika transaksi ACTIVE, kembalikan status slot parkir menjadi AVAILABLE
+        // If the transaction is ACTIVE, return the parking slot status to AVAILABLE.
         if (transaction.getStatus() == ParkingStatus.ACTIVE) {
             ParkingSpot parkingSpot = transaction.getParkingSpot();
             if (parkingSpot != null) {
@@ -154,7 +154,7 @@ public class AdminParkingTransactionServiceImpl implements IAdminParkingTransact
         }
 
         transaction.setStatus(ParkingStatus.CANCELLED);
-        // Opsi: Jika dibatalkan, status pembayaran juga bisa disetel ke FAILED atau CANCELLED (jika ada enum CANCELLED di PaymentStatus)
+        // Option: If canceled, the payment status can also be set to FAILED or CANCELLED (if there is a CANCELLED enum in PaymentStatus).
         // transaction.setPaymentStatus(PaymentStatus.FAILED);
         parkingTransactionRepository.save(transaction);
 

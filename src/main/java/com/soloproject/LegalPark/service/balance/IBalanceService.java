@@ -6,14 +6,14 @@ import org.springframework.http.ResponseEntity;
 
 public interface IBalanceService {
 
-//     Mengurangi saldo pengguna.
+//     Reducing the user's balance.
     ResponseEntity<Object> deductBalance(DeductBalanceRequest request);
 
 
-//     Menambah saldo pengguna.
+//     Add to user balance.
     ResponseEntity<Object> addBalance(AddBalanceRequest request);
 
 
-//     Mendapatkan saldo pengguna saat ini.
+//     Retrieve the user's current balance.
     ResponseEntity<Object> getUserBalance(String userId);
 }

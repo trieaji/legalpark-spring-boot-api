@@ -6,12 +6,12 @@ import org.springframework.http.ResponseEntity;
 
 public interface IVerificationCodeService {
     /**
-     * Menghasilkan dan mengirim kode verifikasi pembayaran ke email pengguna.
+     * Generate and send payment verification codes to users' email addresses.
      */
     ResponseEntity<Object> generateAndSendPaymentVerificationCode(PaymentVerificationCodeRequest request);
 
     /**
-     * Memvalidasi kode verifikasi pembayaran yang dimasukkan pengguna.
+     * Validate the payment verification code entered by the user.
      */
     ResponseEntity<Object> validatePaymentVerificationCode(VerifyPaymentCodeRequest request);
 

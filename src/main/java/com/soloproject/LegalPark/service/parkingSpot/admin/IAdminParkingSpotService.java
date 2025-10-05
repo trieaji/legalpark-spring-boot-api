@@ -4,27 +4,25 @@ import com.soloproject.LegalPark.dto.request.parkingSpot.ParkingSpotRequest;
 import com.soloproject.LegalPark.dto.request.parkingSpot.ParkingSpotUpdateRequest;
 import org.springframework.http.ResponseEntity;
 
-public interface IAdminParkingSpotService { //menangani di mana kendaraan itu parkir (slot parkir)
-    // 1. Mendaftarkan Slot Parkir Baru (CREATE)
+public interface IAdminParkingSpotService {
+    // 1. Registering a New Parking Slot (CREATE)
     ResponseEntity<Object> adminCreateParkingSpot(ParkingSpotRequest request);
 
-    // 2. Melihat Semua Slot Parkir (GET ALL)
+    // 2. View All Parking Spaces (GET ALL)
     ResponseEntity<Object> adminGetAllParkingSpots();
 
-    // 3. Melihat Detail Slot Parkir Tertentu berdasarkan ID (GET by ID)
+    // 3. View Details of Specific Parking Spaces by ID (GET by ID)
     ResponseEntity<Object> adminGetParkingSpotById(String id);
 
-    // 4. Memperbarui Data Slot Parkir (UPDATE)
+    // 4. Updating Parking Slot Data (UPDATE)
     ResponseEntity<Object> adminUpdateParkingSpot(String id, ParkingSpotUpdateRequest request);
 
-    // 5. Menghapus Slot Parkir (DELETE)
+    // 5. Deleting a Parking Slot (DELETE)
     ResponseEntity<Object> adminDeleteParkingSpot(String id);
 
-    // 6. Melihat Slot Parkir berdasarkan Merchant (Opsional, tapi sangat berguna)
-    // Parameter bisa berupa merchantId atau merchantCode
+    // 6. View Parking Spaces by Merchant (Optional, but very useful)
+    // The parameter can be merchantId or merchantCode.
     ResponseEntity<Object> adminGetParkingSpotsByMerchant(String merchantIdentifier); // merchantId/merchantCode
 
-    /*
-    * Untuk Admin Perlu akses penuh untuk mengelola slot parkir (membuat, memperbarui detail, menghapus, melihat semua).
-    * */
+
 }

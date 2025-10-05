@@ -20,13 +20,13 @@ public class ReportResponseMapper {
         response.setStatus(transaction.getStatus().name());
         response.setPaymentStatus(transaction.getPaymentStatus().name());
 
-        // Mapping detail Vehicle jika tidak otomatis oleh ModelMapper atau Anda butuh kontrol lebih
+
         if (transaction.getVehicle() != null) {
             response.setVehicle(modelMapper.map(transaction.getVehicle(), VehicleResponse.class));
 
         }
 
-        // Mapping detail ParkingSpot
+
         if (transaction.getParkingSpot() != null) {
             response.setParkingSpot(modelMapper.map(transaction.getParkingSpot(), ParkingSpotResponse.class));
         }
