@@ -140,7 +140,7 @@ Parking Exit → POST /api/v1/user/parking-transactions/exit
 
 
 
-📝 Penjelasan Singkat 
+📝 Brief Explanation 
 
 After registering, the user will receive a token for account verification sent via email. Once the account is verified, the user will receive a default balance of 100K. Users can then register their vehicle and perform a parking entry. When preparing for parking exit, the user needs to generate a payment verification code first. This verification code will be sent via email, and after entering it, the user will receive a payment success notification.
 
@@ -149,7 +149,7 @@ After registering, the user will receive a token for account verification sent v
 
 
 
-💬 Pesan dari Pemilik
+💬 A Message from the Owner
 
 LegalPark is a mini-project that serves as a backend API for parking management, payment processing, vehicle data, and handling illegal parking issues.
 
